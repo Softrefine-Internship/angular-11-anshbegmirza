@@ -2,7 +2,7 @@
   <div class="row">
 
     <!-- Sub-employees -->
-    <div class="ng-container" *ngIf="rootEmployee">
+    <!-- <div class="ng-container" *ngIf="rootEmployee">
       <div class=" card" *ngFor="let emp of Employees, let i = index " (click)="onClickShowChildren(i)">
         <div class="card-details">
           <img class="card-img img-fluid" src={{emp.imageUrl}} alt={{emp.name}}>
@@ -20,6 +20,46 @@
         </div>
 
       </div>
+    </div> -->
+
+    <!-- Root employee -->
+    <div class="ng-container" *ngIf="rootEmployee">
+      <div class="card" (click)="onClickShowChildren(rootEmployee[0].id-1)">
+        <div class="card-details">
+          <img src={{rootEmployee[0].imageUrl}} class="card-img img-fluid" alt="{{rootEmployee[0].name}}">
+          <div class="card-data">
+            <h5>{{rootEmployee[0].name}}</h5>
+            <p>Designation : {{rootEmployee[0].designation}}</p>
+            <p>Email : {{rootEmployee[0].email}}</p>
+            <p>Subordinates : {{rootEmployee[0].subordinates?.length}}</p>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Children employees -->
+    <div class="ng-container" *ngFor="let child of childs, let i = index" (click)="onClickShowChildren(i)">
+      <div class=" card">
+        <div class="card-details">
+          <img class="card-img img-fluid" src={{child[0].imageUrl}} alt={{child[0].name}}>
+          <div class="card-data">
+            <h5>{{child[0].name}}</h5>
+            <p>Designation : {{child[0].designation}}</p>
+            <p>Email : {{child[0].email}}</p>
+            <p>Subordinates : {{child[0].subordinates?.length}}</p>
+          </div>
+        </div>
+
+        <div class="card-actionables">
+          <button class="btn btn-outline-primary">Add</button>
+          <button class="btn btn-outline-danger" *ngIf="child[0].subordinates !==null  ">Delete</button>
+        </div>
+
+      </div>
+
+    </div>
+
+
+
   </div>
 </div>
