@@ -12,11 +12,11 @@ export class EmployeeService {
     {
       id: 1,
       name: 'John Doe',
-      managerId: null,
+      managerId: null, // parent id
       imageUrl:
         'https://images.generated.photos/rJAUHO0BIo3HPTZHmRquIELKHzFv9aGQVup9gAcohas/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MDI0NDIxLmpwZw.jpg',
       email: 'john.doe@example.com',
-      subordinates: [2, 3],
+      subordinates: [2, 3], // child ids
       designation: 'CEO',
     },
     {

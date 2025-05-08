@@ -1,45 +1,25 @@
 <div class="col-xs-12">
   <div class="row">
-    <!-- Root employee. -->
-    <div class="ng-container" *ngIf="rootEmployee">
-      <div class="card" *ngFor="let emp of rootEmployee, let i = index ">
-        <div class="card-details">
-          <img class="card-img img-fluid" src={{emp.imageUrl}} alt={{emp.name}}>
-          <div class="card-data">
-            <h5>{{emp.name}}</h5>
-            <p>Designation : {{emp.designation}}</p>
-            <p>Email : {{emp.email}}</p>
-            <p>Subordinates : {{emp.subordinates?.length}}</p>
-          </div>
-        </div>
-        <div class="card-actionables">
-          <button class="btn btn-outline-primary">Add</button>
-          <button class="btn btn-outline-danger">Delete</button>
-        </div>
-      </div>
-      <!-- <div class="vr" style="width: 10px; margin: 0 auto;"></div> -->
-    </div>
+
     <!-- Sub-employees -->
     <div class="ng-container" *ngIf="rootEmployee">
-      <div class=" card" *ngFor="let emp of Employees, let i = index ">
+      <div class=" card" *ngFor="let emp of Employees, let i = index " (click)="onClickShowChildren(i)">
         <div class="card-details">
           <img class="card-img img-fluid" src={{emp.imageUrl}} alt={{emp.name}}>
           <div class="card-data">
             <h5>{{emp.name}}</h5>
             <p>Designation : {{emp.designation}}</p>
             <p>Email : {{emp.email}}</p>
-            <!-- <p>Manager ID : {{emp.managerId}}</p> -->
             <p>Subordinates : {{emp.subordinates?.length}}</p>
           </div>
         </div>
 
         <div class="card-actionables">
           <button class="btn btn-outline-primary">Add</button>
-          <button class="btn btn-outline-danger">Delete</button>
+          <button class="btn btn-outline-danger" *ngIf="emp.subordinates !==null  ">Delete</button>
         </div>
+
       </div>
     </div>
-
-
   </div>
 </div>

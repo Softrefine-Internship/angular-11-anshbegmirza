@@ -20,7 +20,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.Employees = this.empService.getEmployee();
-    // console.log(this.Employees);
 
     this.rootEmployee = this.Employees.filter((emp) => {
       emp.managerId === null;
@@ -31,40 +30,41 @@ export class AppComponent implements OnInit {
 
   getEmployeebyID(id: any) {
     return this.Employees.filter((emp) => {
-      return emp.id === id;
+      return emp.id === id ? emp : null;
     });
   }
 
-  buildHierarchy(employees: Employee[]): any {
-    const employeeMap: { [id: number]: Employee } = {};
+  buildHierarchy(employees: Employee[]) {
+    console.log('here goes your heirarchy code !');
+    console.log(employees);
 
-    employees.forEach((employee) => {
-      employeeMap[employee.id] = employee;
+    const tree: any[] = [];
+    const childOf: any[] = [];
+
+    employees.forEach((item: any) => {
+      const { id, managerId } = item;
+      childOf[id] = childOf[id] || [];
+      item.children = childOf[id];
+      managerId
+        ? (childOf[managerId] = childOf[managerId] || []).push(item)
+        : tree.push(item);
     });
+    console.log(tree);
 
-    const hierarchy = employees.filter((employee) => {
-      if (employee.managerId === null) {
-        return true;
-      }
-      const manager = employeeMap[employee.managerId];
-      let subordinates = [];
-      // console.log('I am the manager.', manager);
+    return tree;
+  }
 
-      if (manager) {
-        if (!manager.subordinates) {
-          manager.subordinates = [];
-        }
-        subordinates = [...manager.subordinates];
-        console.log(subordinates);
-        subordinates.forEach((id) => {
-          manager.subordinates?.push(this.getEmployeebyID(id));
-          console.log(this.getEmployeebyID(id));
-        });
-      }
-      return false;
-    });
-    // console.log('this is the hierarchy', hierarchy);
-    console.log(hierarchy);
-    return hierarchy;
+  onClickShowChildren(i: number) {
+    const subordinates = this.Employees[i]?.subordinates;
+    console.log(subordinates);
+    let childs: any[] = [];
+    if (subordinates && Array.isArray(subordinates)) {
+      subordinates.forEach((childIndex) => {
+        // console.log(childIndex);
+
+        childs.push(this.getEmployeebyID(childIndex));
+      });
+      console.log(...childs);
+    }
   }
 }
