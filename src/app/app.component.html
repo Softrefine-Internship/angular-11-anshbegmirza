@@ -19,8 +19,9 @@
               </div>
             </div>
             <div class="card-actionables">
-              <button class="btn btn-primary btn-sm">Add</button>
-              <button class="btn btn-danger btn-sm" *ngIf="emp.subordinates?.length && emp.id !== 1">Delete</button>
+              <button class="btn btn-primary btn-sm" (click)="openAddDialog()">Add</button>
+              <button class="btn btn-danger btn-sm" *ngIf="emp.subordinates?.length && emp.id !== 1"
+                (click)="openDeleteDialog()">Delete</button>
             </div>
           </div>
 

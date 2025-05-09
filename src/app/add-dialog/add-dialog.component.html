@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Add Employee</h2>
+<mat-dialog-content>
+  <form [formGroup]="EmployeeForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Employee Name</mat-label>
+      <input matInput formControlName="name" />
+      <mat-error *ngIf="EmployeeForm.get('name').hasError('required')">
+        Name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Designation</mat-label>
+      <input matInput formControlName="designation" />
+      <mat-error *ngIf="EmployeeForm.get('designation').hasError('required')">
+        Designation is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" />
+      <mat-error *ngIf="EmployeeForm.get('email').hasError('required')">
+        Email is required
+      </mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="onSubmit()">Add Employee</button>
+    <button mat-button (click)="onCancel()">Cancel</button>
+  </form>
+</mat-dialog-content>

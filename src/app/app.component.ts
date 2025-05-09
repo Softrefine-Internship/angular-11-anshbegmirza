@@ -4,6 +4,10 @@ import { Employee } from './shared/employee.model';
 import { Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { AddDialogComponent } from './add-dialog/add-dialog.component';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+import { Inject } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +23,11 @@ export class AppComponent implements OnInit {
 
   // @Input() employee: Employee;
 
-  constructor(private empService: EmployeeService) {}
+  constructor(
+    private empService: EmployeeService,
+    public dialogRef: MatDialogRef<AddDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
   ngOnInit(): void {
     this.Employees = this.empService.getEmployee();
@@ -63,6 +71,18 @@ export class AppComponent implements OnInit {
   // Toggle child visibility on click
   onClickShowChildren(emp: Employee): void {
     emp.isExpanded = !emp.isExpanded;
+    console.log(emp);
+  }
+
+  // opens add dialog
+  openAddDialog() {
+    console.log('Add component clicked');
+    this.dialogRef.(AddDialogComponent,{});
+  }
+
+  // opens delete dialog
+  openDeleteDialog() {
+    console.log('Delete dialog clicekd');
   }
 }
 
