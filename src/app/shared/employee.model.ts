@@ -5,6 +5,8 @@ export interface Employee {
   imageUrl: string;
   email: string;
   subordinates: any[] | null;
-  children?: [];
   designation: string;
+
+  isExpanded?: boolean;
+  children?: Employee[];
 }
