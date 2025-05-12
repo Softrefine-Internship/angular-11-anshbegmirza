@@ -1,0 +1,41 @@
+.dialog {
+  &-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  &-data {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+
+  &-content {
+    mat-form-field {
+      width: 100%;
+    }
+  }
+
+  &-form-fields {
+    width: 100%;
+    margin-bottom: 16px;
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+
+  &-actionables {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    button {
+      min-width: 100px;
+    }
+  }
+}

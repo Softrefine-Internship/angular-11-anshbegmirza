@@ -6,7 +6,7 @@
       </ng-container>
 
       <ng-template #renderEmployee let-emp>
-        <div class="employee-node" (click)="onClickShowChildren(emp)">
+        <div class="employee-node" (click)="onClickShowChildren(emp); $event.stopPropagation()">
           <!-- Employee Card -->
           <div class="card">
             <div class="card-details">
@@ -16,12 +16,19 @@
                 <p>Designation: <span class="card-data-value">{{ emp.designation }}</span></p>
                 <p>Email: <span class="card-data-value">{{ emp.email }}</span></p>
                 <p>Subordinates: <span class="card-data-value">{{ emp.subordinates?.length }}</span></p>
+
+
               </div>
             </div>
             <div class="card-actionables">
-              <button class="btn btn-primary btn-sm" (click)="openAddDialog()">Add</button>
-              <button class="btn btn-danger btn-sm" *ngIf="emp.subordinates?.length && emp.id !== 1"
-                (click)="openDeleteDialog()">Delete</button>
+              <button class="btn btn-primary btn-sm" (click)="openAddDialog(emp.id)">Add</button>
+
+              <!-- <button class="btn btn-secondary btn-sm" (click)="onClickShowChildren(emp); $event.stopPropagation()">
+                {{ emp.isExpanded ? 'Hide Children' : 'Show Children' }}
+              </button> -->
+              <button class="btn btn-danger btn-sm"
+                *ngIf="emp.subordinates?.length && emp.id !== 1 && emp.subordinates !== null"
+                (click)="openDeleteDialog(emp.name, emp.id)">Delete</button>
             </div>
           </div>
 

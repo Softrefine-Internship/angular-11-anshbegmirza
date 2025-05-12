@@ -1,6 +1,7 @@
 .col-xs-12 {
   overflow-x: hidden;
   margin-top: 20px;
+  margin-bottom: 20px;
   background-color: #1e1e1e;
 }
 
@@ -69,7 +70,7 @@
   .children-container {
     position: relative;
     margin-top: 20px;
-
+    width: 100% !important;
     .line-down {
       position: absolute;
       top: -15px;

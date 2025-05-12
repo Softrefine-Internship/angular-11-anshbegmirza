@@ -85,4 +85,19 @@ export class EmployeeService {
   getEmployee() {
     return [...this.employee];
   }
+
+  addEmployee(emp: Employee) {
+    this.employee.push(emp);
+    console.log('Employee added:', this.employee, emp);
+  }
+
+  getNextId(): number {
+    const ids = this.employee.map((emp) => emp.id);
+    return Math.max(...ids) + 1;
+  }
+
+  removeEmpById(empId: number) {
+    this.employee = this.employee.filter((emp) => emp.id !== empId);
+    console.log('Employee removed:', empId, this.employee);
+  }
 }
