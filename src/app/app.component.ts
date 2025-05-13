@@ -25,12 +25,23 @@ export class AppComponent implements OnInit {
   // @Input() employee: Employee;
   constructor(private dialog: MatDialog, private empService: EmployeeService) {}
 
-  ngOnInit(): void {
-    this.Employees = this.empService.getEmployee();
-    this.rootEmployee = this.buildHierarchy(this.Employees);
+  async ngOnInit(): Promise<void> {
+    // this.Employees = this.empService.getEmployee();
+    // this.rootEmployee = this.buildHierarchy(this.Employees);
 
-    console.log('Fetched data is', this.Employees);
-    console.log('Root employee is', this.rootEmployee);
+    await this.empService.seedEmployeeData();
+    this.empService.getEmployee((data) => {
+      console.log(data);
+
+      this.Employees = data;
+
+      this.rootEmployee = this.buildHierarchy(this.Employees);
+      console.log('Employees array', this.Employees);
+      console.log('Root', this.rootEmployee);
+    });
+
+    // console.log('Fetched data is', this.Employees);
+    // console.log('Root employee is', this.rootEmployee);
   }
 
   // Build hierarchy from flat data
@@ -44,7 +55,14 @@ export class AppComponent implements OnInit {
     });
 
     let root: Employee | undefined;
+    if (root) {
+      console.log('Root found', root);
+    }
 
+    if (!root) {
+      console.log('Root not found !');
+      return;
+    }
     employees.forEach((emp) => {
       if (emp.managerId === null) {
         root = emp;
@@ -53,6 +71,7 @@ export class AppComponent implements OnInit {
         manager?.children?.push(emp);
       }
     });
+    console.log('Root employee is', root);
 
     return root;
   }
@@ -95,10 +114,13 @@ export class AppComponent implements OnInit {
       data: { managerId },
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {
+    dialogRef.afterClosed().subscribe(async (result: any) => {
       if (result) {
-        this.Employees = this.empService.getEmployee(); // re-fetch
-        this.rootEmployee = this.buildHierarchy(this.Employees); // rebuild tree
+        // this.Employees = this.empService.getEmployee(data); // re-fetch
+        // this.rootEmployee = this.buildHierarchy(this.Employees); // rebuild tree
+        const nextId = this.empService.getNextId();
+        result.id = nextId;
+        await this.empService.addEmployee(result);
       }
     });
   }
@@ -111,10 +133,13 @@ export class AppComponent implements OnInit {
       height: 'max-content',
       data: { empName, empId },
     });
-    dialogRef.afterClosed().subscribe((result: any) => {
+    dialogRef.afterClosed().subscribe(async (result: any) => {
       if (result) {
-        this.Employees = this.empService.getEmployee(); // re-fetch
-        this.rootEmployee = this.buildHierarchy(this.Employees); // rebuild tree
+        // this.Employees = this.empService.getEmployee(); // re-fetch
+        // this.rootEmployee = this.buildHierarchy(this.Employees); // rebuild tree
+        await this.empService.removeEmpById(empId).then(() => {
+          console.log('Employee removed', empId);
+        });
       }
     });
   }

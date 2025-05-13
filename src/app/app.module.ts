@@ -8,6 +8,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
+
+import { environment } from 'src/environments/environment';
+
 import { AppComponent } from './app.component';
 import { AddDialogComponent } from './add-dialog/add-dialog.component';
 import { RemoveDialogComponent } from './remove-dialog/remove-dialog.component';
@@ -16,6 +22,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [AppComponent, AddDialogComponent, RemoveDialogComponent],
   imports: [
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireStorageModule,
+    AngularFireDatabaseModule,
     BrowserModule,
     BrowserAnimationsModule,
     MatCardModule,
