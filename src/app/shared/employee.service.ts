@@ -78,19 +78,11 @@ export class EmployeeService {
         imageUrl:
           'https://images.generated.photos/65R9EbABt8z4qMO19kVryWt_BQ2K04RuHQb-fEftpO0/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MDY5MDIxLmpwZw.jpg',
         email: 'eva.green@example.com',
-        subordinates: null,
+        subordinates: [],
         designation: 'Accountant',
       },
     ];
 
-    // for (const emp of employees) {
-    //   this.db
-    //     .object(`employees/${emp.id}`)
-    //     .set(emp)
-    //     .then(() => {
-    //       console.log('Seeded employee:', emp.name);
-    //     });
-    // }
     const snapshot = await this.db.object('employees').query.once('value');
     if (snapshot.exists()) {
       console.log('Employee data already exists. Skipping seed.');
@@ -119,7 +111,52 @@ export class EmployeeService {
       });
   }
 
+  async onAddEmployee(emp: Employee) {
+    try {
+      const newId = await this.getNextId();
+      emp.id = newId;
+
+      if (!emp.subordinates || emp.subordinates.length === 0) {
+        emp.subordinates = [emp.id];
+      }
+
+      const managerSnapshot = await this.db
+        .object(`employees/${emp.managerId}`)
+        .query.once('value');
+      const managerData = managerSnapshot.val();
+
+      if (!managerData) {
+        throw new Error('Manager not found');
+      }
+
+      if (managerData.subordinates && managerData.subordinates.length >= 5) {
+        alert(
+          'This manager already has 5 subordinates. Please select another manager.'
+        );
+        return;
+      }
+
+      await this.addEmployee(emp);
+
+      const updatedSubordinates = managerData.subordinates ?? [];
+      updatedSubordinates.push(emp.id);
+      await this.db
+        .object(`employees/${emp.managerId}/subordinates`)
+        .set(updatedSubordinates);
+
+      alert('Employee added successfully!');
+    } catch (error) {
+      console.error('Error adding employee:', error);
+      alert('An error occurred while adding the employee.');
+    }
+  }
+
   addEmployee(emp: Employee) {
+    if (emp.subordinates === null || emp.subordinates === undefined) {
+      emp.subordinates = [];
+      emp.subordinates.push(emp.id);
+    }
+
     return this.db.object(`employees/${emp.id}`).set(emp);
   }
 
@@ -130,7 +167,43 @@ export class EmployeeService {
     return Math.max(...ids) + 1;
   }
 
-  removeEmpById(empId: number): Promise<void> {
-    return this.db.object(`employees/${empId}`).remove();
+  async removeEmpById(empId: number): Promise<void> {
+    const employeeSnapshot = await this.db
+      .object<Employee>(`employees/${empId}`)
+      .query.once('value');
+    const employee = employeeSnapshot.val();
+
+    if (!employee) {
+      console.error(`Employee with ID ${empId} not found.`);
+      return;
+    }
+
+    const parentId = employee.managerId;
+
+    if (parentId !== null && parentId !== undefined) {
+      // Get parent employee
+      const parentSnapshot = await this.db
+        .object<Employee>(`employees/${parentId}`)
+        .query.once('value');
+      const parent = parentSnapshot.val();
+
+      if (parent && parent.subordinates) {
+        // Remove the deleted employee's ID from parent's subordinates
+        const updatedSubordinates = parent.subordinates.filter(
+          (id: number) => id !== empId
+        );
+        await this.db
+          .object(`employees/${parentId}/subordinates`)
+          .set(updatedSubordinates);
+      }
+    }
+
+    await this.db.object(`employees/${empId}`).remove();
   }
 }
+
+// Demo images links
+
+// https://static.generated.photos/vue-static/face-generator/landing/wall/11.jpg
+
+// https://static.generated.photos/vue-static/face-generator/landing/wall/21.jpg

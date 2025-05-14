@@ -15,7 +15,8 @@
                 <h5>{{ emp.name }}</h5>
                 <p>Designation: <span class="card-data-value">{{ emp.designation }}</span></p>
                 <p>Email: <span class="card-data-value">{{ emp.email }}</span></p>
-                <p>Subordinates: <span class="card-data-value">{{ emp.subordinates?.length }}</span></p>
+                <p *ngIf="emp.subordinates?.length>0">Subordinates: <span class="card-data-value">{{
+                    emp.subordinates?.length }}</span></p>
 
 
               </div>
@@ -37,6 +38,7 @@
             <div class="line-down"></div>
             <div class="children">
               <ng-container *ngFor="let child of emp.children">
+                <div class="line-down"></div>
                 <ng-container *ngTemplateOutlet="renderEmployee; context: { $implicit: child }"></ng-container>
               </ng-container>
             </div>

@@ -26,22 +26,15 @@ export class AppComponent implements OnInit {
   constructor(private dialog: MatDialog, private empService: EmployeeService) {}
 
   async ngOnInit(): Promise<void> {
-    // this.Employees = this.empService.getEmployee();
-    // this.rootEmployee = this.buildHierarchy(this.Employees);
-
     await this.empService.seedEmployeeData();
     this.empService.getEmployee((data) => {
-      console.log(data);
+      console.log('Fetched data from DB', data);
 
       this.Employees = data;
 
       this.rootEmployee = this.buildHierarchy(this.Employees);
       console.log('Employees array', this.Employees);
-      console.log('Root', this.rootEmployee);
     });
-
-    // console.log('Fetched data is', this.Employees);
-    // console.log('Root employee is', this.rootEmployee);
   }
 
   // Build hierarchy from flat data
@@ -55,24 +48,19 @@ export class AppComponent implements OnInit {
     });
 
     let root: Employee | undefined;
-    if (root) {
-      console.log('Root found', root);
-    }
 
-    if (!root) {
-      console.log('Root not found !');
-      return;
-    }
     employees.forEach((emp) => {
-      if (emp.managerId === null) {
+      if (emp.managerId === null || emp.managerId === undefined) {
         root = emp;
       } else {
         const manager = map.get(emp.managerId);
         manager?.children?.push(emp);
       }
     });
-    console.log('Root employee is', root);
 
+    if (!root) console.log('Root not found');
+
+    console.log('Root employee is', root);
     return root;
   }
 
@@ -116,8 +104,6 @@ export class AppComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(async (result: any) => {
       if (result) {
-        // this.Employees = this.empService.getEmployee(data); // re-fetch
-        // this.rootEmployee = this.buildHierarchy(this.Employees); // rebuild tree
         const nextId = this.empService.getNextId();
         result.id = nextId;
         await this.empService.addEmployee(result);
@@ -135,11 +121,11 @@ export class AppComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(async (result: any) => {
       if (result) {
-        // this.Employees = this.empService.getEmployee(); // re-fetch
-        // this.rootEmployee = this.buildHierarchy(this.Employees); // rebuild tree
-        await this.empService.removeEmpById(empId).then(() => {
-          console.log('Employee removed', empId);
-        });
+        console.log('dialog closed');
+
+        // await this.empService.removeEmpById(empId).then(() => {
+        //   console.log('Employee removed', empId);
+        // });
       }
     });
   }

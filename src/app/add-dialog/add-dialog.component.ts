@@ -23,17 +23,21 @@ export class AddDialogComponent implements OnInit {
   ) {}
 
   EmployeeForm!: FormGroup;
-  nextId = this.empService.getNextId();
+  nextId: number = 0;
+  async gettingNextID() {
+    this.nextId = await this.empService.getNextId();
+    console.log(this.nextId);
+
+    this.EmployeeForm.get('id')?.setValue(this.nextId);
+  }
+
   ngOnInit(): void {
     this.EmployeeForm = new FormGroup({
       managerId: new FormControl(
         this.data.managerId ?? null,
         Validators.required
       ),
-      id: new FormControl(this.nextId, [
-        Validators.required,
-        Validators.minLength(1),
-      ]),
+      id: new FormControl(null, [Validators.required, Validators.minLength(1)]),
       imageUrl: new FormControl('', [
         Validators.required,
         Validators.minLength(20),
@@ -50,6 +54,8 @@ export class AddDialogComponent implements OnInit {
       ]),
       email: new FormControl('', [Validators.required, Validators.email]),
     });
+
+    this.gettingNextID();
   }
 
   onSubmit() {
@@ -60,7 +66,7 @@ export class AddDialogComponent implements OnInit {
     console.log(this.EmployeeForm.invalid, this.EmployeeForm.valid);
 
     if (this.EmployeeForm.valid) {
-      this.empService.addEmployee(this.EmployeeForm.value);
+      this.empService.onAddEmployee(this.EmployeeForm.value);
       this.dialogRef.close(this.EmployeeForm.value);
       console.log('form submitted');
       console.log(this.EmployeeForm.value);

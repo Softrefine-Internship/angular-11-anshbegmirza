@@ -27,6 +27,14 @@
     margin: 0 auto;
     padding: 10px 20px;
     background-image: linear-gradient(0, #626262 0%, #3d3d3d 100%);
+    @media (max-width: 30em) {
+      .row > * {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+        --bs-gutter-x: 0 !important;
+        --bs-gutter-y: 0 !important;
+      }
+    }
     &-data {
       margin-top: 5px;
       h5 {
@@ -86,6 +94,10 @@
       gap: 40px;
       justify-content: center;
       margin-top: 10px;
+
+      @media (max-width: 62.5em) {
+        flex-direction: column;
+      }
     }
     &::before {
       content: "";
