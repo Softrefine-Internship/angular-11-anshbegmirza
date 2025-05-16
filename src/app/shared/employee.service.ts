@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from '@angular/fire/compat/database';
 import { Employee } from './employee.model';
+import { Observable, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -48,7 +49,7 @@ export class EmployeeService {
         imageUrl:
           'https://images.generated.photos/pHgnRFp13HMBvBeKXNq-x-d7rpx-Fc0FPQXGT5DyOj8/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MDEwMTUyLmpwZw.jpg',
         email: 'alice.brown@example.com',
-        subordinates: [8, 9],
+        subordinates: [],
         designation: 'Engineering Manager',
       },
       {
@@ -58,7 +59,7 @@ export class EmployeeService {
         imageUrl:
           'https://images.generated.photos/sWdaNHkJvJRJQ85esJbPM7QmIb-xxFI9u4R3oNJb6k0/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/NTczNDgxLmpwZw.jpg',
         email: 'charlie.white@example.com',
-        subordinates: [10, 11],
+        subordinates: [],
         designation: 'Product Manager',
       },
       {
@@ -85,7 +86,7 @@ export class EmployeeService {
 
     const snapshot = await this.db.object('employees').query.once('value');
     if (snapshot.exists()) {
-      console.log('Employee data already exists. Skipping seed.');
+      // console.log('Employee data already exists. Skipping seed.');
       return;
     }
     const promises = employees.map((emp) => {
@@ -199,6 +200,110 @@ export class EmployeeService {
     }
 
     await this.db.object(`employees/${empId}`).remove();
+  }
+
+  // live fetching
+  getOtherEmployee(empId: number): Observable<Employee[]> {
+    return this.db
+      .list<Employee>('employees')
+      .snapshotChanges()
+      .pipe(
+        map((changes) =>
+          changes
+            .map((c) => {
+              const data = c.payload.val() as Employee;
+              return {
+                ...data,
+                id: data.id ?? -1,
+                subordinates: data.subordinates ?? [],
+              } as Employee;
+            })
+            .filter((emp) => emp.id !== empId)
+        )
+      );
+  }
+
+  // async updateManager(empId: number, newManagerId: number): Promise<void> {
+  //   const managerSnap = await this.db
+  //     .object(`employees/${newManagerId}`)
+  //     .query.once('value');
+  //   const managerData = managerSnap.val();
+  //   if (!managerData) {
+  //     console.error(`Manager with ID ${newManagerId} not found.`);
+  //     return;
+  //   }
+  //   const updatedEmp = {
+  //     ...managerData,
+  //     id: empId,
+  //     managerId: null,
+  //   };
+
+  //   await this.db.object(`employees/${empId}`).update(updatedEmp);
+  //   console.log(
+  //     `Manager ${newManagerId} updated to match data of Employee ${empId}`
+  //   );
+  // }
+
+  async updateManager(empId: number, newManagerId: number): Promise<void> {
+    const empRef = this.db.object(`employees/${empId}`);
+    await empRef.update({ managerId: newManagerId });
+    console.log(`Updated manager of employee ${empId} to ${newManagerId}`);
+  }
+
+  async swapRootWithEmployee(selectedEmployeeId: number): Promise<void> {
+    const dbRef = this.db.database.ref('employees');
+
+    const [rootSnap, selectedSnap] = await Promise.all([
+      dbRef.child('1').get(),
+      dbRef.child(String(selectedEmployeeId)).get(),
+    ]);
+
+    const rootData = rootSnap.val();
+    const selectedData = selectedSnap.val();
+
+    if (!rootData || !selectedData) {
+      console.error('Either root or selected employee not found.');
+      return;
+    }
+
+    // Prepare swapped employee objects
+    const newRoot: Employee = {
+      ...selectedData,
+      id: 1,
+      managerId: null,
+    };
+
+    const newOtherEmp: Employee = {
+      ...rootData,
+      id: selectedEmployeeId,
+      managerId: selectedData.managerId,
+    };
+
+    // Fetch all employees
+    const snapshot = await dbRef.get();
+    const allEmployees: { [key: string]: Employee } = snapshot.val();
+
+    const updates: Record<string, any> = {};
+
+    // Update full objects first (avoid nested conflict later)
+    updates[`1`] = newRoot;
+    updates[`${selectedEmployeeId}`] = newOtherEmp;
+
+    // Update managerId for others, but skip the swapped ones
+    for (const [key, emp] of Object.entries(allEmployees)) {
+      if (key === '1' || key === `${selectedEmployeeId}`) continue;
+
+      if (emp.managerId === selectedEmployeeId) {
+        updates[`${key}/managerId`] = 1;
+      } else if (emp.managerId === 1) {
+        updates[`${key}/managerId`] = selectedEmployeeId;
+      }
+    }
+
+    // Perform update with no conflicting paths
+    await dbRef.update(updates);
+
+    console.log(`Swapped root (id 1) with employee ID ${selectedEmployeeId}.`);
   }
 }
 

@@ -9,6 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { inject, Injectable } from '@angular/core';
 import { RemoveDialogComponent } from './remove-dialog/remove-dialog.component';
+import { ChangeDialogComponent } from './change-dialog/change-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -21,19 +22,25 @@ export class AppComponent implements OnInit {
   rootEmployee?: Employee | undefined = undefined;
   treeLevels: number = 0;
   childs: Employee[] = [];
-
+  loading: boolean = false;
   // @Input() employee: Employee;
   constructor(private dialog: MatDialog, private empService: EmployeeService) {}
 
   async ngOnInit(): Promise<void> {
+    this.loadEmployees();
+  }
+
+  async loadEmployees(): Promise<void> {
+    this.loading = true;
     await this.empService.seedEmployeeData();
+    this.loading = false;
     this.empService.getEmployee((data) => {
       console.log('Fetched data from DB', data);
 
       this.Employees = data;
 
       this.rootEmployee = this.buildHierarchy(this.Employees);
-      console.log('Employees array', this.Employees);
+      console.log('Employees reloaded', this.Employees);
     });
   }
 
@@ -106,7 +113,9 @@ export class AppComponent implements OnInit {
       if (result) {
         const nextId = this.empService.getNextId();
         result.id = nextId;
+        this.loading = true;
         await this.empService.addEmployee(result);
+        this.loading = false;
       }
     });
   }
@@ -126,6 +135,28 @@ export class AppComponent implements OnInit {
         // await this.empService.removeEmpById(empId).then(() => {
         //   console.log('Employee removed', empId);
         // });
+      }
+    });
+  }
+
+  //change manager
+  changeManager(empName: string, empId: number) {
+    console.log('Manager changed');
+
+    let dialogRef = this.dialog.open(ChangeDialogComponent, {
+      width: '450px',
+      height: 'max-content',
+      data: {
+        empName,
+        empId,
+      },
+    });
+    dialogRef.afterClosed().subscribe(async (result: any) => {
+      if (result) {
+        // await this.empService.updateManager(result.empId, result.managerId);
+        await this.empService.swapRootWithEmployee(result.newRootID);
+        this.loadEmployees();
+        console.log('dialog closed');
       }
     });
   }

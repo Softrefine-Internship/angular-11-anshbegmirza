@@ -1,0 +1,16 @@
+.dialog {
+  &-conetent {
+    font-size: 18px;
+  }
+
+  &-actionables {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    button {
+      min-width: 100px;
+    }
+  }
+}

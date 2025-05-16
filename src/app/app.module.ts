@@ -19,8 +19,10 @@ import { AddDialogComponent } from './add-dialog/add-dialog.component';
 import { RemoveDialogComponent } from './remove-dialog/remove-dialog.component';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ChangeDialogComponent } from './change-dialog/change-dialog.component';
+import { SpinnerComponent } from './spinner/spinner.component';
 @NgModule({
-  declarations: [AppComponent, AddDialogComponent, RemoveDialogComponent],
+  declarations: [AppComponent, AddDialogComponent, RemoveDialogComponent, ChangeDialogComponent, SpinnerComponent],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireStorageModule,

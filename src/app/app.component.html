@@ -1,5 +1,6 @@
 <div class="col-xs-12">
   <div class="row">
+    <app-spinner *ngIf="loading" style="text-align: center; margin: 15% 0;"></app-spinner>
     <div class="org-chart">
       <ng-container *ngIf="rootEmployee">
         <ng-container *ngTemplateOutlet="renderEmployee; context: { $implicit: rootEmployee }"></ng-container>
@@ -30,12 +31,16 @@
               <button class="btn btn-danger btn-sm"
                 *ngIf="emp.subordinates?.length && emp.id !== 1 && emp.subordinates !== null"
                 (click)="openDeleteDialog(emp.name, emp.id)">Delete</button>
+
+              <button class="btn btn-secondary btn-sm" *ngIf=" emp.id === 1" (click)="changeManager(emp.name,emp.id)">
+                Change Manager</button>
+
             </div>
           </div>
 
           <!-- Recursive Children if expanded -->
           <div class="children-container" *ngIf="emp.isExpanded && emp.children?.length">
-            <div class="line-down"></div>
+            <!-- <div class="line-down"></div> -->
             <div class="children">
               <ng-container *ngFor="let child of emp.children">
                 <div class="line-down"></div>
