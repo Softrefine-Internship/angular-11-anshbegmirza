@@ -36,15 +36,6 @@ export class ChangeDialogComponent implements OnInit {
     this.dialogRef.close(true);
   }
 
-  // async onSubmit() {
-  //   if (this.selectedManagerId) {
-  //     await this.empService.updateManager(this.empId, this.selectedManagerId);
-  //     console.log('Manager updated');
-  //     this.dialogRef.close(true);
-  //     this.onManagerChangeConfirmed();
-  //   }
-  // }
-
   async onSubmit() {
     if (this.selectedManagerId) {
       // await this.empService.swapRootWithEmployee(this.selectedManagerId);

@@ -9,97 +9,6 @@ import { Observable, map } from 'rxjs';
 export class EmployeeService {
   constructor(private db: AngularFireDatabase) {}
 
-  async seedEmployeeData(): Promise<void> {
-    const employees: Employee[] = [
-      {
-        id: 1,
-        name: 'John Doe',
-        managerId: null,
-        imageUrl:
-          'https://images.generated.photos/rJAUHO0BIo3HPTZHmRquIELKHzFv9aGQVup9gAcohas/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MDI0NDIxLmpwZw.jpg',
-        email: 'john.doe@example.com',
-        subordinates: [2, 3],
-        designation: 'CEO',
-      },
-      {
-        id: 2,
-        name: 'Jane Smith',
-        managerId: 1,
-        imageUrl:
-          'https://images.generated.photos/sQO382vTFE2AeD_55KCemqzo9YoEzxcDB92Vd7QUgCk/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/ODg1NTM3LmpwZw.jpg',
-        email: 'jane.smith@example.com',
-        subordinates: [4, 5],
-        designation: 'CTO',
-      },
-      {
-        id: 3,
-        name: 'Bob Johnson',
-        managerId: 1,
-        imageUrl:
-          'https://images.generated.photos/Mlz6ZD6FvX9HHsEQFmcjcpTScjUBmwddGSAMi3QWqhM/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MjY5NjU0LmpwZw.jpg',
-        email: 'bob.johnson@example.com',
-        subordinates: [6],
-        designation: 'CFO',
-      },
-      {
-        id: 4,
-        name: 'Alice Brown',
-        managerId: 2,
-
-        imageUrl:
-          'https://images.generated.photos/pHgnRFp13HMBvBeKXNq-x-d7rpx-Fc0FPQXGT5DyOj8/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MDEwMTUyLmpwZw.jpg',
-        email: 'alice.brown@example.com',
-        subordinates: [],
-        designation: 'Engineering Manager',
-      },
-      {
-        id: 5,
-        name: 'Charlie White',
-        managerId: 2,
-        imageUrl:
-          'https://images.generated.photos/sWdaNHkJvJRJQ85esJbPM7QmIb-xxFI9u4R3oNJb6k0/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/NTczNDgxLmpwZw.jpg',
-        email: 'charlie.white@example.com',
-        subordinates: [],
-        designation: 'Product Manager',
-      },
-      {
-        id: 6,
-        name: 'David Black',
-        managerId: 3,
-        imageUrl:
-          'https://images.generated.photos/fJ_gE4TmTMNkcU3WgAFx3tR6NZNMQQ4Ni_2vNClAedY/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MjMxODE4LmpwZw.jpg',
-        email: 'david.black@example.com',
-        subordinates: [7],
-        designation: 'Finance Manager',
-      },
-      {
-        id: 7,
-        name: 'Eva Green',
-        managerId: 6,
-        imageUrl:
-          'https://images.generated.photos/65R9EbABt8z4qMO19kVryWt_BQ2K04RuHQb-fEftpO0/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MDY5MDIxLmpwZw.jpg',
-        email: 'eva.green@example.com',
-        subordinates: [],
-        designation: 'Accountant',
-      },
-    ];
-
-    const snapshot = await this.db.object('employees').query.once('value');
-    if (snapshot.exists()) {
-      // console.log('Employee data already exists. Skipping seed.');
-      return;
-    }
-    const promises = employees.map((emp) => {
-      return this.db
-        .object(`employees/${emp.id}`)
-        .set(JSON.parse(JSON.stringify(emp)));
-    });
-
-    return Promise.all(promises).then(() => {
-      console.log('All employees seeded.');
-    });
-  }
-
   getEmployee(callback: (employees: Employee[]) => void): void {
     this.db
       .object('employees')
@@ -112,22 +21,38 @@ export class EmployeeService {
       });
   }
 
+  async isDatabaseEmpty(): Promise<boolean> {
+    let dbSnapshot = await this.db.object(`employees`).query.once('value');
+    dbSnapshot = dbSnapshot.val();
+    return dbSnapshot === null;
+  }
+
   async onAddEmployee(emp: Employee) {
     try {
       const newId = await this.getNextId();
       emp.id = newId;
 
-      if (!emp.subordinates || emp.subordinates.length === 0) {
-        emp.subordinates = [emp.id];
+      const dbEmpty = await this.isDatabaseEmpty();
+
+      if (dbEmpty) {
+        emp.managerId = null;
+        emp.subordinates = [];
+
+        await this.addEmployee(emp);
+
+        alert('Root employee added successfully!');
+        return;
       }
 
+      // Otherwise, find the manager
       const managerSnapshot = await this.db
         .object(`employees/${emp.managerId}`)
         .query.once('value');
       const managerData = managerSnapshot.val();
 
       if (!managerData) {
-        throw new Error('Manager not found');
+        alert('Manager not found');
+        return;
       }
 
       if (managerData.subordinates && managerData.subordinates.length >= 5) {
@@ -141,6 +66,7 @@ export class EmployeeService {
 
       const updatedSubordinates = managerData.subordinates ?? [];
       updatedSubordinates.push(emp.id);
+
       await this.db
         .object(`employees/${emp.managerId}/subordinates`)
         .set(updatedSubordinates);
@@ -155,7 +81,7 @@ export class EmployeeService {
   addEmployee(emp: Employee) {
     if (emp.subordinates === null || emp.subordinates === undefined) {
       emp.subordinates = [];
-      emp.subordinates.push(emp.id);
+      // emp.subordinates.push(emp.id);
     }
 
     return this.db.object(`employees/${emp.id}`).set(emp);
@@ -223,27 +149,6 @@ export class EmployeeService {
       );
   }
 
-  // async updateManager(empId: number, newManagerId: number): Promise<void> {
-  //   const managerSnap = await this.db
-  //     .object(`employees/${newManagerId}`)
-  //     .query.once('value');
-  //   const managerData = managerSnap.val();
-  //   if (!managerData) {
-  //     console.error(`Manager with ID ${newManagerId} not found.`);
-  //     return;
-  //   }
-  //   const updatedEmp = {
-  //     ...managerData,
-  //     id: empId,
-  //     managerId: null,
-  //   };
-
-  //   await this.db.object(`employees/${empId}`).update(updatedEmp);
-  //   console.log(
-  //     `Manager ${newManagerId} updated to match data of Employee ${empId}`
-  //   );
-  // }
-
   async updateManager(empId: number, newManagerId: number): Promise<void> {
     const empRef = this.db.object(`employees/${empId}`);
     await empRef.update({ managerId: newManagerId });
@@ -266,7 +171,6 @@ export class EmployeeService {
       return;
     }
 
-    // Prepare swapped employee objects
     const newRoot: Employee = {
       ...selectedData,
       id: 1,
@@ -279,17 +183,14 @@ export class EmployeeService {
       managerId: selectedData.managerId,
     };
 
-    // Fetch all employees
     const snapshot = await dbRef.get();
     const allEmployees: { [key: string]: Employee } = snapshot.val();
 
     const updates: Record<string, any> = {};
 
-    // Update full objects first (avoid nested conflict later)
     updates[`1`] = newRoot;
     updates[`${selectedEmployeeId}`] = newOtherEmp;
 
-    // Update managerId for others, but skip the swapped ones
     for (const [key, emp] of Object.entries(allEmployees)) {
       if (key === '1' || key === `${selectedEmployeeId}`) continue;
 
@@ -300,15 +201,102 @@ export class EmployeeService {
       }
     }
 
-    // Perform update with no conflicting paths
     await dbRef.update(updates);
 
     console.log(`Swapped root (id 1) with employee ID ${selectedEmployeeId}.`);
   }
 }
 
-// Demo images links
+/* OLD PREFILLED DATA PROVIDED IN THE TEST PDF */
+/*
+// async seedEmployeeData(): Promise<void> {
+  //   const employees: Employee[] = [
+  //     {
+  //       id: 1,
+  //       name: 'John Doe',
+  //       managerId: null,
+  //       imageUrl:
+  //         'https://images.generated.photos/rJAUHO0BIo3HPTZHmRquIELKHzFv9aGQVup9gAcohas/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MDI0NDIxLmpwZw.jpg',
+  //       email: 'john.doe@example.com',
+  //       subordinates: [2, 3],
+  //       designation: 'CEO',
+  //     },
+  //     {
+  //       id: 2,
+  //       name: 'Jane Smith',
+  //       managerId: 1,
+  //       imageUrl:
+  //         'https://images.generated.photos/sQO382vTFE2AeD_55KCemqzo9YoEzxcDB92Vd7QUgCk/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/ODg1NTM3LmpwZw.jpg',
+  //       email: 'jane.smith@example.com',
+  //       subordinates: [4, 5],
+  //       designation: 'CTO',
+  //     },
+  //     {
+  //       id: 3,
+  //       name: 'Bob Johnson',
+  //       managerId: 1,
+  //       imageUrl:
+  //         'https://images.generated.photos/Mlz6ZD6FvX9HHsEQFmcjcpTScjUBmwddGSAMi3QWqhM/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MjY5NjU0LmpwZw.jpg',
+  //       email: 'bob.johnson@example.com',
+  //       subordinates: [6],
+  //       designation: 'CFO',
+  //     },
+  //     {
+  //       id: 4,
+  //       name: 'Alice Brown',
+  //       managerId: 2,
 
-// https://static.generated.photos/vue-static/face-generator/landing/wall/11.jpg
+  //       imageUrl:
+  //         'https://images.generated.photos/pHgnRFp13HMBvBeKXNq-x-d7rpx-Fc0FPQXGT5DyOj8/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MDEwMTUyLmpwZw.jpg',
+  //       email: 'alice.brown@example.com',
+  //       subordinates: [],
+  //       designation: 'Engineering Manager',
+  //     },
+  //     {
+  //       id: 5,
+  //       name: 'Charlie White',
+  //       managerId: 2,
+  //       imageUrl:
+  //         'https://images.generated.photos/sWdaNHkJvJRJQ85esJbPM7QmIb-xxFI9u4R3oNJb6k0/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/NTczNDgxLmpwZw.jpg',
+  //       email: 'charlie.white@example.com',
+  //       subordinates: [],
+  //       designation: 'Product Manager',
+  //     },
+  //     {
+  //       id: 6,
+  //       name: 'David Black',
+  //       managerId: 3,
+  //       imageUrl:
+  //         'https://images.generated.photos/fJ_gE4TmTMNkcU3WgAFx3tR6NZNMQQ4Ni_2vNClAedY/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MjMxODE4LmpwZw.jpg',
+  //       email: 'david.black@example.com',
+  //       subordinates: [7],
+  //       designation: 'Finance Manager',
+  //     },
+  //     {
+  //       id: 7,
+  //       name: 'Eva Green',
+  //       managerId: 6,
+  //       imageUrl:
+  //         'https://images.generated.photos/65R9EbABt8z4qMO19kVryWt_BQ2K04RuHQb-fEftpO0/rs:fit:256:256/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MDY5MDIxLmpwZw.jpg',
+  //       email: 'eva.green@example.com',
+  //       subordinates: [],
+  //       designation: 'Accountant',
+  //     },
+  //   ];
 
-// https://static.generated.photos/vue-static/face-generator/landing/wall/21.jpg
+  //   const snapshot = await this.db.object('employees').query.once('value');
+  //   if (snapshot.exists()) {
+  //     // console.log('Employee data already exists. Skipping seed.');
+  //     return;
+  //   }
+  //   const promises = employees.map((emp) => {
+  //     return this.db
+  //       .object(`employees/${emp.id}`)
+  //       .set(JSON.parse(JSON.stringify(emp)));
+  //   });
+
+  //   return Promise.all(promises).then(() => {
+  //     console.log('All employees seeded.');
+  //   });
+  // }
+  */

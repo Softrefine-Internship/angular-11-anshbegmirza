@@ -30,9 +30,14 @@ export class AppComponent implements OnInit {
     this.loadEmployees();
   }
 
+  addEmployee() {
+    console.log('Add employee button clicked');
+    this.openAddDialog(this.rootEmployee?.id || 0);
+  }
+
   async loadEmployees(): Promise<void> {
     this.loading = true;
-    await this.empService.seedEmployeeData();
+    // await this.empService.seedEmployeeData();
     this.loading = false;
     this.empService.getEmployee((data) => {
       console.log('Fetched data from DB', data);
@@ -131,10 +136,6 @@ export class AppComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (result: any) => {
       if (result) {
         console.log('dialog closed');
-
-        // await this.empService.removeEmpById(empId).then(() => {
-        //   console.log('Employee removed', empId);
-        // });
       }
     });
   }
@@ -161,50 +162,3 @@ export class AppComponent implements OnInit {
     });
   }
 }
-
-/*
-**********
-OLD HIERARCHY CODE
-**********
-
- onClickShowChildren(empId: number): void {
-    // const subordinates = this.Employees[empId]?.subordinates;
-    const employee = this.getEmployeebyID(empId);
-
-    console.log(`this is clicked Employee id`, empId);
-    console.log('this employee clicked', this.Employees[0]);
-    // console.log(`these are suborbs`, subordinates);
-
-    if (employee && Array.isArray(employee.subordinates)) {
-      this.childs = employee.subordinates
-        .map((childIndex) => this.getEmployeebyID(childIndex))
-        .filter((emp): emp is Employee => !!emp);
-
-      console.log('Child employees are:', this.childs);
-    } else {
-      this.childs = [];
-    }
-  }
-
-
-  // buildHierarchy(employees: Employee[]) {
-  //   console.log('here goes your heirarchy code !');
-  //   console.log(employees);
-
-  //   const tree: any[] = [];
-  //   const childOf: any[] = [];
-
-  //   employees.forEach((item: any) => {
-  //     const { id, managerId } = item;
-  //     childOf[id] = childOf[id] || [];
-  //     item.children = childOf[id];
-  //     managerId
-  //       ? (childOf[managerId] = childOf[managerId] || []).push(item)
-  //       : tree.push(item);
-  //   });
-  //   console.log(tree);
-
-  //   return tree;
-  // }
-
-  */
