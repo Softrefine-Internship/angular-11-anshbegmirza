@@ -6,11 +6,28 @@
   position: relative;
 }
 
+// .add-btn {
+//   display: inline-block;
+//   position: fixed;
+//   left: 47%;
+// }
+
 .add-btn {
-  // padding: 3px 5px;
-  display: inline-block;
   position: fixed;
   left: 50%;
+  transform: translateX(-50%);
+  padding: 0.6rem 1rem;
+  background-color: #2e2e2e;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #444;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  }
 }
 
 .org-chart {
@@ -26,14 +43,16 @@
   flex-direction: column;
   position: relative;
   align-items: center;
-  // outline: 1px solid white;
+
   .card {
     border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.24);
+    // box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.24);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+    background-image: linear-gradient(180deg, #3a3a3a 0%, #2c2c2c 100%);
     width: max-content;
     margin: 0 auto;
     padding: 10px 20px;
-    background-image: linear-gradient(0, #626262 0%, #3d3d3d 100%);
+    // background-image: linear-gradient(0, #626262 0%, #3d3d3d 100%);
     @media (max-width: 30em) {
       .row > * {
         padding-right: 0 !important;
@@ -86,14 +105,15 @@
     position: relative;
     margin-top: 20px;
     width: 100% !important;
-    // outline: 1px solid lime;
+
     .line-down {
       position: absolute;
       top: -15px;
       left: 50%;
       width: 2px;
       height: 15px;
-      background: white;
+      // background: white;
+      background: #fff;
       transform: translateX(-50%);
     }
 
@@ -102,7 +122,7 @@
       gap: 50px;
       justify-content: center;
       margin-top: 10px;
-      // outline: 1px solid red;
+
       @media (max-width: 59em) {
         flex-direction: column;
       }
@@ -114,7 +134,7 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: white;
+      background: #fff;
     }
   }
 }

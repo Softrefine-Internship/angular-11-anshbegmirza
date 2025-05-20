@@ -31,6 +31,7 @@ export class EmployeeService {
     try {
       const newId = await this.getNextId();
       emp.id = newId;
+      // console.log(newId);
 
       const dbEmpty = await this.isDatabaseEmpty();
 
@@ -40,7 +41,7 @@ export class EmployeeService {
 
         await this.addEmployee(emp);
 
-        alert('Root employee added successfully!');
+        // alert('Root employee added successfully!');
         return;
       }
 
@@ -51,30 +52,35 @@ export class EmployeeService {
       const managerData = managerSnapshot.val();
 
       if (!managerData) {
-        alert('Manager not found');
+        // alert('Manager not found');
         return;
       }
 
       if (managerData.subordinates && managerData.subordinates.length >= 5) {
-        alert(
-          'This manager already has 5 subordinates. Please select another manager.'
-        );
+        // alert(
+        // 'This manager already has 5 subordinates. Please select another manager.'
+        // );
         return;
       }
 
       await this.addEmployee(emp);
 
       const updatedSubordinates = managerData.subordinates ?? [];
-      updatedSubordinates.push(emp.id);
+      // console.log(' subordinates are', updatedSubordinates);
+      if (newId !== undefined && newId !== null) {
+        updatedSubordinates.push(newId);
+        // console.log('updated subordinates are', updatedSubordinates);
 
-      await this.db
-        .object(`employees/${emp.managerId}/subordinates`)
-        .set(updatedSubordinates);
+        await this.db
+          .object(`employees/${emp.managerId}/subordinates`)
+          .set(updatedSubordinates);
+        // console.log(emp.managerId);
+      }
 
-      alert('Employee added successfully!');
+      // alert('Employee added successfully!');
     } catch (error) {
       console.error('Error adding employee:', error);
-      alert('An error occurred while adding the employee.');
+      // alert('An error occurred while adding the employee.');
     }
   }
 
@@ -119,6 +125,8 @@ export class EmployeeService {
         const updatedSubordinates = parent.subordinates.filter(
           (id: number) => id !== empId
         );
+        console.log('updatedsubobrs on delete are', updatedSubordinates);
+
         await this.db
           .object(`employees/${parentId}/subordinates`)
           .set(updatedSubordinates);
@@ -171,15 +179,27 @@ export class EmployeeService {
       return;
     }
 
+    const rootSubordinates = rootData.subordinates;
+    // const newSubordinates = selectedEMployee.subordinates;
+
     const newRoot: Employee = {
       ...selectedData,
       id: 1,
+      subordinates: rootSubordinates,
       managerId: null,
     };
+
+    const otherSuborbs = selectedData.subordinates || [];
+    console.log(
+      selectedData.subordinates === otherSuborbs,
+      selectedData,
+      otherSuborbs
+    );
 
     const newOtherEmp: Employee = {
       ...rootData,
       id: selectedEmployeeId,
+      subordinates: otherSuborbs,
       managerId: selectedData.managerId,
     };
 

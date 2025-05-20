@@ -1,6 +1,6 @@
 <div class="col-xs-12">
   <div class="">
-    <button class="btn btn-primary  add-btn" *ngIf="Employees.length === 0" (click)="addEmployee()">Add</button>
+    <button class="btn btn-primary  add-btn" *ngIf="Employees.length === 0" (click)="addEmployee()">Add Manager</button>
   </div>
   <div class="row">
     <!-- <app-spinner *ngIf="loading" style="text-align: center; margin: 15% 0;"></app-spinner> -->
@@ -27,7 +27,7 @@
               <button class="btn btn-primary btn-sm" (click)="openAddDialog(emp.id)">Add</button>
               <button class="btn btn-danger btn-sm" *ngIf="(emp.subordinates?.length || 0) ===0"
                 (click)="openDeleteDialog(emp.name, emp.id)">Delete</button>
-              <button class="btn btn-secondary btn-sm" *ngIf=" emp.id === 1 && emp.subordinates?.length >0"
+              <button class="btn btn-light btn-sm" *ngIf=" emp.id === 1 && emp.subordinates?.length >0"
                 (click)="changeManager(emp.name,emp.id)">
                 Change Manager</button>
             </div>

@@ -1,14 +1,16 @@
-<h2 mat-dialog-title class="dialog-title">Select Reporting Manager</h2>
+<div class="change-dialog">
+  <h2 mat-dialog-title class="dialog-title">Select Reporting Manager</h2>
 
-<mat-dialog-content class="dialog-content">
-  <select id="manager" class="form-select" [(ngModel)]="selectedManagerId">
-    <option [value]="emp.id" *ngFor="let emp of otherEmployee">
-      {{ emp.name }} ({{ emp.email }})
-    </option>
-  </select>
+  <mat-dialog-content class="dialog-content">
+    <select id="manager" class="form-select dialog-select" [(ngModel)]="selectedManagerId">
+      <option [value]="emp.id" *ngFor="let emp of otherEmployee">
+        {{ emp.name }} ({{ emp.email }})
+      </option>
+    </select>
 
-  <div class="dialog-actionables">
-    <button mat-raised-button color="primary" (click)="onSubmit()">Save</button>
-    <button mat-button (click)="onCancel()">Cancel</button>
-  </div>
-</mat-dialog-content>
+    <div class="dialog-actionables">
+      <button mat-raised-button color="primary" (click)="onSubmit()">Save</button>
+      <button mat-button (click)="onCancel()">Cancel</button>
+    </div>
+  </mat-dialog-content>
+</div>

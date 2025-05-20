@@ -1,8 +1,10 @@
-<h2 mat-dialog-title class="dialog-title">Delete Employee</h2>
-<mat-dialog-content class="dialog-content">
-  <p>Are you sure you want to delete {{empName}}</p>
-  <div class="dialog-actionables">
-    <button mat-raised-button color="primary" (click)="onSubmit()">Yes</button>
-    <button mat-button (click)="onCancel()">Cancel</button>
-  </div>
-</mat-dialog-content>
+<div class="remove-dialog">
+  <h2 mat-dialog-title class="dialog-title">Delete Employee</h2>
+  <mat-dialog-content class="dialog-content">
+    <p class=>Are you sure you want to delete {{empName}}</p>
+    <div class="dialog-actionables">
+      <button mat-raised-button color="primary" (click)="onSubmit()">Yes</button>
+      <button mat-button (click)="onCancel()">Cancel</button>
+    </div>
+  </mat-dialog-content>
+</div>
