@@ -21,8 +21,11 @@ export class RemoveDialogComponent {
     this.dialogRef.close(true);
   }
 
-  onSubmit() {
+  onSubmit(event: FocusEvent) {
     console.log('form submitted');
+    // event.preventDefault();
+    // event.stopImmediatePropagation();
+    // event.stopPropagation();
     this.empService.removeEmpById(this.data.empId);
     this.dialogRef.close(true);
   }

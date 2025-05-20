@@ -24,6 +24,9 @@ export class AppComponent implements OnInit {
   childs: Employee[] = [];
   loading: boolean = false;
   // @Input() employee: Employee;
+  hasError: boolean = false;
+  errorMessage: string = `Error Message`;
+
   constructor(private dialog: MatDialog, private empService: EmployeeService) {}
 
   async ngOnInit(): Promise<void> {
@@ -70,7 +73,11 @@ export class AppComponent implements OnInit {
       }
     });
 
-    if (!root) console.log('Root not found');
+    if (!root) {
+      console.log('Root not found');
+      this.hasError = true;
+      this.errorMessage = `Root not found, please check the data`;
+    }
 
     console.log('Root employee is', root);
     return root;
@@ -128,6 +135,10 @@ export class AppComponent implements OnInit {
   // opens delete dialog
   openDeleteDialog(empName: string, empId: number) {
     console.log('Delete dialog clicekd');
+
+    const buttonEl = document.activeElement as HTMLElement;
+    buttonEl.blur();
+
     let dialogRef = this.dialog.open(RemoveDialogComponent, {
       width: '450px',
       height: 'max-content',

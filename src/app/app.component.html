@@ -1,16 +1,19 @@
 <div class="col-xs-12">
   <div class="">
-    <button class="btn btn-primary  add-btn" *ngIf="Employees.length === 0" (click)="addEmployee()">Add</button>
+    <button class="btn btn-primary  add-btn" *ngIf="Employees.length === 0" (click)="addEmployee()">Add Manager</button>
   </div>
   <div class="row">
     <!-- <app-spinner *ngIf="loading" style="text-align: center; margin: 15% 0;"></app-spinner> -->
+    <div class="card-message" *ngIf="hasError">
+      <p>{{errorMessage}}</p>
+    </div>
     <div class="org-chart">
       <ng-container *ngIf="rootEmployee">
         <ng-container *ngTemplateOutlet="renderEmployee; context: { $implicit: rootEmployee }"></ng-container>
       </ng-container>
 
       <ng-template #renderEmployee let-emp>
-        <div class="employee-node" (click)="onClickShowChildren(emp); $event.stopPropagation()">
+        <div class="employee-node" (click)="onClickShowChildren(emp);$event.stopPropagation(); $event.preventDefault()">
           <!-- Employee Card -->
           <div class="card">
             <div class="card-details">
@@ -26,8 +29,8 @@
             <div class="card-actionables">
               <button class="btn btn-primary btn-sm" (click)="openAddDialog(emp.id)">Add</button>
               <button class="btn btn-danger btn-sm" *ngIf="(emp.subordinates?.length || 0) ===0"
-                (click)="openDeleteDialog(emp.name, emp.id)">Delete</button>
-              <button class="btn btn-secondary btn-sm" *ngIf=" emp.id === 1 && emp.subordinates?.length >0"
+                (click)="openDeleteDialog(emp.name, emp.id); $event.stopPropagation(); $event.preventDefault() ">Delete</button>
+              <button class="btn btn-light btn-sm" *ngIf=" emp.id === 1 && emp.subordinates?.length >0"
                 (click)="changeManager(emp.name,emp.id)">
                 Change Manager</button>
             </div>

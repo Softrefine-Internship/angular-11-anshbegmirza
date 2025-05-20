@@ -1,9 +1,17 @@
+.add-dialog {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+  // background-image: linear-gradient(90deg, #3a3a3a4b 0%, #2c2c2c96 100%);
+  // background-color: #1e1e1e;
+  color: #fff !important;
+}
+
 .dialog {
   &-title {
     text-align: center;
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 16px;
+    color: #1e1e1e;
   }
 
   &-data {
@@ -22,7 +30,8 @@
   &-form-fields {
     width: 100%;
     margin-bottom: 16px;
-
+    // background-color: #fff;
+    // background: #fff;
     mat-form-field {
       width: 100%;
     }
@@ -36,6 +45,10 @@
 
     button {
       min-width: 100px;
+
+      &:last-child {
+        color: #1e1e1e;
+      }
     }
   }
 }

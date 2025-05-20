@@ -1,74 +1,77 @@
-<h2 mat-dialog-title class="dialog-title">Add Employee</h2>
-<mat-dialog-content class="dialog-content">
+<div class="add-dialog">
+  <h2 mat-dialog-title class="dialog-title">Add Employee</h2>
+  <mat-dialog-content class="dialog-content">
 
-  <form [formGroup]="EmployeeForm">
+    <form [formGroup]="EmployeeForm">
 
-    <div class="dialog-data">
-      <div class="dialog-form-fields dialog-data-form-fields">
+      <div class="dialog-data">
+        <div class="dialog-form-fields dialog-data-form-fields">
+          <mat-form-field appearance="fill">
+            <mat-label>Employee ID</mat-label>
+            <input matInput formControlName="id" readonly />
+            <mat-error *ngIf="EmployeeForm.get('id')?.hasError('required')">
+              Employee ID is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="dialog-form-fields dialog-data-form-fields">
+          <mat-form-field appearance="fill">
+            <mat-label>Manager ID</mat-label>
+            <input matInput formControlName="managerId" readonly />
+            <mat-error *ngIf=" EmployeeForm.get('managerId')?.hasError('required')">
+              ManagerID is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="dialog-form-fields">
         <mat-form-field appearance="fill">
-          <mat-label>Employee ID</mat-label>
-          <input matInput formControlName="id" readonly />
-          <mat-error *ngIf="EmployeeForm.get('id')?.hasError('required')">
-            Employee ID is required
+          <mat-label>Employee Name</mat-label>
+          <input matInput formControlName="name" />
+          <mat-error *ngIf="EmployeeForm.get('name')?.hasError('required')">
+            Image Url is required
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div class="dialog-form-fields">
+        <mat-form-field appearance="fill">
+          <mat-label>Image URL</mat-label>
+          <input matInput formControlName="imageUrl" />
+          <mat-error *ngIf="EmployeeForm.get('imageUrl')?.hasError('required')">
+            Name is required
           </mat-error>
         </mat-form-field>
       </div>
 
-      <div class="dialog-form-fields dialog-data-form-fields">
+      <div class="dialog-form-fields">
         <mat-form-field appearance="fill">
-          <mat-label>Manager ID</mat-label>
-          <input matInput formControlName="managerId" readonly />
-          <mat-error *ngIf=" EmployeeForm.get('managerId')?.hasError('required')">
-            ManagerID is required
+          <mat-label>Designation</mat-label>
+          <input matInput formControlName="designation" />
+          <mat-error *ngIf="EmployeeForm.get('designation')?.hasError('required')">
+            Designation is required
           </mat-error>
         </mat-form-field>
       </div>
-    </div>
 
-    <div class="dialog-form-fields">
-      <mat-form-field appearance="fill">
-        <mat-label>Employee Name</mat-label>
-        <input matInput formControlName="name" />
-        <mat-error *ngIf="EmployeeForm.get('name')?.hasError('required')">
-          Image Url is required
-        </mat-error>
-      </mat-form-field>
+      <div class="dialog-form-fields">
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" />
+          <mat-error *ngIf="EmployeeForm.get('email')?.hasError('required')">
+            Email is required
+          </mat-error>
+        </mat-form-field>
+      </div>
 
-    </div>
+      <div class="dialog-actionables">
+        <button mat-raised-button color="primary" (click)="onSubmit()">Add </button>
+        <button mat-button (click)="onCancel()">Cancel</button>
+      </div>
+    </form>
+  </mat-dialog-content>
 
-    <div class="dialog-form-fields">
-      <mat-form-field appearance="fill">
-        <mat-label>Image URL</mat-label>
-        <input matInput formControlName="imageUrl" />
-        <mat-error *ngIf="EmployeeForm.get('imageUrl')?.hasError('required')">
-          Name is required
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <div class="dialog-form-fields">
-      <mat-form-field appearance="fill">
-        <mat-label>Designation</mat-label>
-        <input matInput formControlName="designation" />
-        <mat-error *ngIf="EmployeeForm.get('designation')?.hasError('required')">
-          Designation is required
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <div class="dialog-form-fields">
-      <mat-form-field appearance="fill">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" />
-        <mat-error *ngIf="EmployeeForm.get('email')?.hasError('required')">
-          Email is required
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <div class="dialog-actionables">
-      <button mat-raised-button color="primary" (click)="onSubmit()">Add </button>
-      <button mat-button (click)="onCancel()">Cancel</button>
-    </div>
-  </form>
-</mat-dialog-content>
+</div>
