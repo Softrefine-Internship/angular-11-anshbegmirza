@@ -35,6 +35,7 @@ export class EmployeeService {
       const newId = await this.getNextId();
       emp.id = newId;
       // console.log(newId);
+      // console.log(newId);
 
       const dbEmpty = await this.isDatabaseEmpty();
 
@@ -195,9 +196,13 @@ export class EmployeeService {
     const rootSubordinates = rootData.subordinates;
     // const newSubordinates = selectedEMployee.subordinates;
 
+    const rootSubordinates = rootData.subordinates;
+    // const newSubordinates = selectedEMployee.subordinates;
+
     const newRoot: Employee = {
       ...selectedData,
       id: 1,
+      subordinates: rootSubordinates,
       subordinates: rootSubordinates,
       managerId: null,
     };
@@ -209,9 +214,17 @@ export class EmployeeService {
       otherSuborbs
     );
 
+    const otherSuborbs = selectedData.subordinates || [];
+    console.log(
+      selectedData.subordinates === otherSuborbs,
+      selectedData,
+      otherSuborbs
+    );
+
     const newOtherEmp: Employee = {
       ...rootData,
       id: selectedEmployeeId,
+      subordinates: otherSuborbs,
       subordinates: otherSuborbs,
       managerId: selectedData.managerId,
     };

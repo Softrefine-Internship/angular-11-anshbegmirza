@@ -29,7 +29,11 @@
             <div class="card-actionables">
               <button class="btn btn-primary btn-sm" (click)="openAddDialog(emp.id)">Add</button>
               <button class="btn btn-danger btn-sm" *ngIf="(emp.subordinates?.length || 0) ===0"
+<<<<<<< HEAD
                 (click)="openDeleteDialog(emp.name, emp.id); $event.stopPropagation(); $event.preventDefault() ">Delete</button>
+=======
+                (click)="openDeleteDialog(emp.name, emp.id)">Delete</button>
+>>>>>>> b5edaeec6f0993eb625b4371954ece4947e7cb32
               <button class="btn btn-light btn-sm" *ngIf=" emp.id === 1 && emp.subordinates?.length >0"
                 (click)="changeManager(emp.name,emp.id)">
                 Change Manager</button>
