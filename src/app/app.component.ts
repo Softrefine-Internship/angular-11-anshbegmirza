@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { AddDialogComponent } from './add-dialog/add-dialog.component';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { inject, Injectable } from '@angular/core';
 import { RemoveDialogComponent } from './remove-dialog/remove-dialog.component';
 import { ChangeDialogComponent } from './change-dialog/change-dialog.component';
@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
   // @Input() employee: Employee;
   hasError: boolean = false;
   errorMessage: string = `Error Message`;
-
+  isDisabled: boolean = false;
   constructor(private dialog: MatDialog, private empService: EmployeeService) {}
 
   async ngOnInit(): Promise<void> {
@@ -35,6 +35,12 @@ export class AppComponent implements OnInit {
 
   addEmployee() {
     console.log('Add employee button clicked');
+    // check for 5 suborbs
+    if (this.rootEmployee?.subordinates?.length === 5) {
+      this.isDisabled = true;
+      return;
+    }
+
     this.openAddDialog(this.rootEmployee?.id || 0);
   }
 
@@ -48,6 +54,8 @@ export class AppComponent implements OnInit {
       this.Employees = data;
 
       this.rootEmployee = this.buildHierarchy(this.Employees);
+      console.log('Root employee Now is :', this.rootEmployee);
+
       console.log('Employees reloaded', this.Employees);
     });
   }
@@ -80,6 +88,8 @@ export class AppComponent implements OnInit {
     }
 
     console.log('Root employee is', root);
+    this.errorMessage = 'Root loaded';
+    this.hasError = true;
     return root;
   }
 
@@ -139,6 +149,8 @@ export class AppComponent implements OnInit {
     const buttonEl = document.activeElement as HTMLElement;
     buttonEl.blur();
 
+    const matDialogConfig = new MatDialogConfig();
+    matDialogConfig.autoFocus = false;
     let dialogRef = this.dialog.open(RemoveDialogComponent, {
       width: '450px',
       height: 'max-content',
@@ -146,7 +158,9 @@ export class AppComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(async (result: any) => {
       if (result) {
-        console.log('dialog closed');
+        console.log(result.deletedID);
+        this.empService.removeEmpById(result.deletedID);
+        this.loadEmployees();
       }
     });
   }

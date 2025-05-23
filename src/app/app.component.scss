@@ -78,29 +78,14 @@
 
   .card {
     border: 1px solid rgba(255, 255, 255, 0.5);
-<<<<<<< HEAD
-=======
     // box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.24);
->>>>>>> b5edaeec6f0993eb625b4371954ece4947e7cb32
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
     background-image: linear-gradient(180deg, #3a3a3a 0%, #2c2c2c 100%);
     width: max-content;
     margin: 0 auto;
     padding: 10px 20px;
-<<<<<<< HEAD
-    max-width: 350px;
-
-=======
     // background-image: linear-gradient(0, #626262 0%, #3d3d3d 100%);
->>>>>>> b5edaeec6f0993eb625b4371954ece4947e7cb32
-    @media (max-width: 30em) {
-      .row > * {
-        padding-right: 0 !important;
-        padding-left: 0 !important;
-        --bs-gutter-x: 0 !important;
-        --bs-gutter-y: 0 !important;
-      }
-    }
+
     &-data {
       margin-top: 5px;
       h5 {
@@ -144,51 +129,67 @@
   .children-container {
     position: relative;
     margin-top: 20px;
-<<<<<<< HEAD
-    margin-left: 10px;
-    display: inline-block;
-    min-width: 80vw !important;
-    max-width: 100% !important;
-=======
-    width: 100% !important;
-
->>>>>>> b5edaeec6f0993eb625b4371954ece4947e7cb32
-    .line-down {
-      position: absolute;
-      top: -15px;
-      left: 50%;
-      width: 2px;
-      height: 15px;
-<<<<<<< HEAD
-=======
-      // background: white;
->>>>>>> b5edaeec6f0993eb625b4371954ece4947e7cb32
-      background: #fff;
-      transform: translateX(-50%);
-    }
+    // width: 100% !important;
 
     .children {
       display: flex;
       justify-content: space-around;
       margin-top: 10px;
-
+      gap: 50px;
+      position: relative;
       @media (max-width: 59em) {
         flex-direction: column;
       }
       > * {
         flex: 1;
-        gap: 20px;
-        max-width: 250px;
+        gap: 10px;
+        max-width: 350px;
       }
     }
-    &::before {
+    .line-down {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      width: 2px;
+      height: 12px;
+      background: #fff;
+      transform: translateX(-50%);
+    }
+
+    &:before {
       content: "";
       position: absolute;
       top: 0;
-      left: 45px;
+      left: 0px;
       right: 0;
       height: 2px;
       background: #fff;
     }
+  }
+  &:not(:first-child) {
+    &:after {
+      content: "";
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      height: 10px;
+      width: 2px;
+      right: 0;
+      transform: translateX(-50%);
+      background: #fff;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 30em) {
+  .card {
+    padding: 5px 10px;
+  }
+  .row > * {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    --bs-gutter-x: 0 !important;
+    --bs-gutter-y: 0 !important;
   }
 }

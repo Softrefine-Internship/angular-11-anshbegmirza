@@ -16,17 +16,24 @@ export class RemoveDialogComponent {
 
   empName: string = this.data.empName;
 
-  onCancel() {
+  onCancel(event: FocusEvent) {
     console.log('cancelled');
     this.dialogRef.close(true);
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    event.stopPropagation();
   }
 
-  onSubmit(event: FocusEvent) {
+  onSubmit(event: any) {
     console.log('form submitted');
-    // event.preventDefault();
-    // event.stopImmediatePropagation();
-    // event.stopPropagation();
-    this.empService.removeEmpById(this.data.empId);
-    this.dialogRef.close(true);
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+    // this.empService.removeEmpById(this.data.empId);
+    this.dialogRef.close({
+      deletedID: this.data.empId,
+    });
+    // this.dialogRef.close(true);
   }
 }

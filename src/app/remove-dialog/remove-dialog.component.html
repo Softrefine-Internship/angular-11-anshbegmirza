@@ -3,12 +3,9 @@
   <mat-dialog-content class="dialog-content">
     <p class=>Are you sure you want to delete {{empName}}</p>
     <div class="dialog-actionables">
-<<<<<<< HEAD
       <button mat-raised-button color="primary" (click)="onSubmit($event)">Yes</button>
-=======
-      <button mat-raised-button color="primary" (click)="onSubmit()">Yes</button>
->>>>>>> b5edaeec6f0993eb625b4371954ece4947e7cb32
-      <button mat-button (click)="onCancel()">Cancel</button>
+
+      <button mat-button (click)="onCancel($event)">Cancel</button>
     </div>
   </mat-dialog-content>
 </div>

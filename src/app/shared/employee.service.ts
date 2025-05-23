@@ -173,7 +173,6 @@ export class EmployeeService {
   async updateManager(empId: number, newManagerId: number): Promise<void> {
     const empRef = this.db.object(`employees/${empId}`);
     await empRef.update({ managerId: newManagerId });
-    // console.log(`Updated manager of employee ${empId} to ${newManagerId}`);
   }
 
   async swapRootWithEmployee(selectedEmployeeId: number): Promise<void> {
@@ -193,63 +192,29 @@ export class EmployeeService {
       return;
     }
 
-    const rootSubordinates = rootData.subordinates;
-    // const newSubordinates = selectedEMployee.subordinates;
-
-    const rootSubordinates = rootData.subordinates;
-    // const newSubordinates = selectedEMployee.subordinates;
-
     const newRoot: Employee = {
       ...selectedData,
       id: 1,
-      subordinates: rootSubordinates,
-      subordinates: rootSubordinates,
       managerId: null,
+      subordinates: rootData.subordinates || [],
+      children: rootData.children || [],
     };
 
-    const otherSuborbs = selectedData.subordinates || [];
-    console.log(
-      selectedData.subordinates === otherSuborbs,
-      selectedData,
-      otherSuborbs
-    );
-
-    const otherSuborbs = selectedData.subordinates || [];
-    console.log(
-      selectedData.subordinates === otherSuborbs,
-      selectedData,
-      otherSuborbs
-    );
-
-    const newOtherEmp: Employee = {
+    const newOldRoot: Employee = {
       ...rootData,
       id: selectedEmployeeId,
-      subordinates: otherSuborbs,
-      subordinates: otherSuborbs,
       managerId: selectedData.managerId,
+      subordinates: selectedData.subordinates || [],
     };
 
     const snapshot = await dbRef.get();
     const allEmployees: { [key: string]: Employee } = snapshot.val();
 
     const updates: Record<string, any> = {};
-
     updates[`1`] = newRoot;
-    updates[`${selectedEmployeeId}`] = newOtherEmp;
-
-    for (const [key, emp] of Object.entries(allEmployees)) {
-      if (key === '1' || key === `${selectedEmployeeId}`) continue;
-
-      if (emp.managerId === selectedEmployeeId) {
-        updates[`${key}/managerId`] = 1;
-      } else if (emp.managerId === 1) {
-        updates[`${key}/managerId`] = selectedEmployeeId;
-      }
-    }
+    updates[`${selectedEmployeeId}`] = newOldRoot;
 
     await dbRef.update(updates);
-
-    // console.log(`Swapped root (id 1) with employee ID ${selectedEmployeeId}.`);
   }
 }
 
