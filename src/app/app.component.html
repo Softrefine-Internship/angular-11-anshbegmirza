@@ -27,8 +27,8 @@
               </div>
             </div>
             <div class="card-actionables">
-              <button class="btn btn-primary btn-sm" (click)="openAddDialog(emp.id)"
-                [disabled]="isDisabled">Add</button>
+              <button class="btn btn-primary btn-sm" (click)="openAddDialog(emp.id)" [disabled]="isDisabled"
+                *ngIf="emp.subordinates?.length <5">Add</button>
               <button class="btn btn-danger btn-sm" *ngIf="(emp.subordinates?.length || 0) ===0"
                 (click)="openDeleteDialog(emp.name, emp.id); $event.stopPropagation(); $event.preventDefault() ;">Delete</button>
               <button class="btn btn-light btn-sm" *ngIf=" emp.id === 1 && emp.subordinates?.length >0"

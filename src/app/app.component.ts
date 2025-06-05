@@ -36,10 +36,13 @@ export class AppComponent implements OnInit {
   addEmployee() {
     console.log('Add employee button clicked');
     // check for 5 suborbs
-    if (this.rootEmployee?.subordinates?.length === 5) {
-      this.isDisabled = true;
+    if (this.rootEmployee?.subordinates?.length === 4) {
+      // this.isDisabled = true;
+      this.errorMessage = 'You can add 1 more only !';
+      this.hasError = true;
       return;
     }
+    console.log(this.rootEmployee?.subordinates?.length);
 
     this.openAddDialog(this.rootEmployee?.id || 0);
   }
